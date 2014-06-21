@@ -6,13 +6,19 @@
         <meta name="msapplication-tap-highlight" content="no" />
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <!--<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />-->
+
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
         <link rel="stylesheet" type="text/css" href="bower_components/intel-appframework/build/css/af.ui.css" />
         <link rel="stylesheet" type="text/css" href="bower_components/intel-appframework/build/css/icons.css" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>KreuzDuell</title>
     </head>
     <body>
-        <div id="afui" class="android"></div>
+        <div id="afui">
+          <div id="content">
+            <div id="main-panel" class="panel">
+            </div>
+          </div>
+        </div>
         <div class="app-loading">
             <h1>KreuzDuell</h1>
             <div class="blink">
@@ -21,13 +27,13 @@
         </div>
 
         <!--<script type="text/javascript" src="cordova.js"></script>-->
-        <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="bower_components/intel-appframework/build/jq.appframework.min.js"></script>
         <script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
         <script type="text/javascript" src="bower_components/backbone/backbone.js"></script>
         <script type="text/javascript" src="bower_components/intel-appframework/build/appframework.min.js"></script>
         <script type="text/javascript" src="bower_components/intel-appframework/build/ui/appframework.ui.min.js"></script>
-        <script>$.ui.autoLaunch = false;</script>
+        <script>$.ui.autoLaunch = false; $.ui.useOSThemes=false;</script>
         <script data-main="js/index" type="text/javascript" src="bower_components/requirejs/require.js"></script>
     </body>
 </html>
