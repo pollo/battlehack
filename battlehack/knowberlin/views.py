@@ -3,6 +3,7 @@ import os, random, string
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 
 from rest_framework.renderers import JSONRenderer
@@ -41,10 +42,38 @@ def create_user(request):
                             status=status.HTTP_400_BAD_REQUEST)
     #generate random password
     password = _generate_random_password()
+    #create user
     user = User.objects.create_user(username=username,
                                     password=password)
     user.save()
     return JSONResponse({'password': password})
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def mylogin(request):
+    try:
+        username = request.POST['username']
+        password = request.POST['password']
+    except (KeyError):
+        return JSONResponse({'error': 'Provide username and password'},
+                            status=status.HTTP_400_BAD_REQUEST)
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            return JSONResponse({})
+        else:
+            return JSONResponse({'error': 'User is not active'},
+                                status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return JSONResponse({'error': 'Invalid username or password'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def mylogout(request):
+    logout(request)
+    return JSONResponse({})
 
 @require_http_methods(["GET"])
 def questionspack_list(request):
