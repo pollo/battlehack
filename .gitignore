@@ -2,5 +2,6 @@
 .DS_Store
 *~
 battlehack/battlehack/local_db_setting.py
-
 bower_components
+battlehack/battlehack/local_db_settings.py
+
