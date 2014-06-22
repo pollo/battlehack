@@ -24,8 +24,8 @@ class Challenge(models.Model):
     user2_current_round = models.IntegerField()
 
 class Round(models.Model):
-    challenge = models.ForeignKey(Challenge)
-    topic = models.ForeignKey(Topic)
+    challenge = models.ForeignKey(Challenge, related_name='rounds')
+    topic = models.ForeignKey(Topic, null=True)
     #1th, 2th .... round
     number = models.IntegerField()
     user1_current_question = models.IntegerField()
