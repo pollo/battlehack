@@ -4,7 +4,7 @@ require.config({
   }
 });
 
-var SERVER_URL = "http://192.168.209.125:8000";
+var SERVER_URL = "http://192.168.2.106:8000";
 
 var init = function() {
   require([

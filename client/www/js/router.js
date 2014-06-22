@@ -2,13 +2,15 @@ define([
   "app",
   "views/welcome",
   "views/main",
-  "views/login"
+  "views/login",
+  "views/selectPack"
 ], function (app) {
   var Router = Backbone.Router.extend({
     routes: {
       "welcome": "welcome",
       "main": "main",
       "login": "login",
+      "selectPack": "selectPack"
     },
 
     welcome: function() {
@@ -23,6 +25,11 @@ define([
 
     login: function() {
       var view = new app.LoginView();
+      view.render();
+    },
+
+    selectPack: function() {
+      var view = new app.SelectPackView();
       view.render();
     }
   });

@@ -1,6 +1,7 @@
 define([
   "app",
   "models/settings",
+  "models/questions",
 ], function (app) {
   app.LoginView = Backbone.View.extend({
     selector: "#main-panel",
@@ -18,7 +19,24 @@ define([
 
       $.post(SERVER_URL + "/login/", {username: user[0].get("value"), password: pass[0].get("value")})
         .done(function () {
-          app.router.navigate("main", {trigger: true});
+          app.packs.reset();
+          $.get(SERVER_URL + "/questionspacks/")
+            .done(function (packsData) {
+              $.each(packsData, function(el) {
+                var topics = new app.TopicsCollection();
+                $.each(el.topics, function (topicData) {
+                  topics.add({name: topicData.models, id: topicData.id});
+                });
+                app.packs.add({name: el.name, id: el.id, topics: topics});
+                console.log(a=app.packs);
+              });
+            })
+            .fail(function (data) {
+              alert(data.error);
+            });
+        })
+        .fail(function (data) {
+          alert(data.error);
         });
       return this;
     }

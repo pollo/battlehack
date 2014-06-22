@@ -7,12 +7,18 @@ define([
     selector: "#main-panel",
     el: "#main-panel",
 
-    events: {
-    },
+    events: {},
 
     render: function () {
       $.ui.setTitle("Main");
       $.ui.updatePanel(this.selector, template);
+      $.get(SERVER_URL + "/questions")
+        .done(function(data) {
+
+        })
+        .fail(function(data) {
+          alert(data.error);
+        })
       return this;
     }
   });
