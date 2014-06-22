@@ -21,5 +21,8 @@ class UserSerializer(serializers.ModelSerializer):
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
+        read_only_fields = ('user1',
+                            'user1_current_round',
+                            'user2_current_round')
 
 
