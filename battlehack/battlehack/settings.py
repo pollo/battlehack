@@ -51,6 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'knowberlin.middleware.DisableCSRF'
 )
 
 ROOT_URLCONF = 'battlehack.urls'
@@ -91,5 +92,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Django cors
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = (
+    'localhost:8000',
+)
 CORS_ALLOW_CREDENTIALS = True
+
+# Django REST framework
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+
+LOGIN_REDIRECT_URL = '/'

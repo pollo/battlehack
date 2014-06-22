@@ -6,7 +6,7 @@ class QuestionsPack(models.Model):
 
 class Topic(models.Model):
     name = models.CharField(max_length=200)
-    questions_pack = models.ForeignKey(QuestionsPack)
+    questions_pack = models.ForeignKey(QuestionsPack, related_name='topics')
 
 class Question(models.Model):
     question = models.TextField()

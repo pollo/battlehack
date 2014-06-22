@@ -8,15 +8,72 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 
+from django.db.models import Q
+
+
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework import status
+
+from rest_framework import viewsets
 
 from knowberlin.models import QuestionsPack, Topic, Challenge, Round, Question,\
     RoundQuestion
 from django.contrib.auth.models import User
 from knowberlin.serializers import QuestionsPackSerializer, TopicSerializer, \
     ChallengeSerializer, UserSerializer
+
+
+
+class QuestionsPackViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Endpoint for questionspack.
+    """
+    queryset = QuestionsPack.objects.all()
+    serializer_class = QuestionsPackSerializer
+
+class TopicViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Endpoint for topics.
+    """
+    queryset = Topic.objects.all()
+    serializer_class = TopicSerializer
+
+def _generate_random_password():
+    length = 13
+    chars = string.ascii_letters + string.digits + '!@#$%^&*()'
+    random.seed = (os.urandom(16))
+    return ''.join(random.choice(chars) for i in range(length))
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint for users.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = ()
+
+    def create(self, request, *args, **kwargs):
+        response = super(UserViewSet, self).create(request, args, kwargs)
+        if response.status_code==status.HTTP_201_CREATED:
+            user = self.object
+            password = _generate_random_password()
+            user.set_password(password)
+            user.save()
+            response.data = {'password': password}
+            return response
+        return response
+
+class ChallengeViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint for challenges.
+    """
+    serializer_class = ChallengeSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Challenge.objects.filter(Q(user1=user) |
+                                        Q(user2=user))
 
 class JSONResponse(HttpResponse):
     """
@@ -34,90 +91,6 @@ def my_login_required(original_view):
         return JSONResponse({'error': 'Login required'},
                             status=status.HTTP_403_FORBIDDEN)
     return new_view
-
-def _generate_random_password():
-    length = 13
-    chars = string.ascii_letters + string.digits + '!@#$%^&*()'
-    random.seed = (os.urandom(16))
-    return ''.join(random.choice(chars) for i in range(length))
-
-@csrf_exempt
-@require_http_methods(["POST", "GET"])
-def handle_users(request):
-    if request.method == 'GET':
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return JSONResponse(serializer.data)
-    elif request.method == 'POST':
-        try:
-            username = request.POST['username']
-        except (KeyError):
-            return JSONResponse({'error': 'No username provided'},
-                                status=status.HTTP_400_BAD_REQUEST)
-        if not username:
-            return JSONResponse({'error': 'Username cannot be empty'},
-                                status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(username=username):
-            #username already taken
-            return JSONResponse({'error': 'Username already used'},
-                                status=status.HTTP_400_BAD_REQUEST)
-        #generate random password
-        password = _generate_random_password()
-        #create user
-        user = User.objects.create_user(username=username,
-                                        password=password)
-        user.save()
-        return JSONResponse({'password': password})
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def mylogin(request):
-    try:
-        username = request.POST['username']
-        password = request.POST['password']
-    except (KeyError):
-        return JSONResponse({'error': 'Provide username and password'},
-                            status=status.HTTP_400_BAD_REQUEST)
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            return JSONResponse({})
-        else:
-            return JSONResponse({'error': 'User is not active'},
-                                status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return JSONResponse({'error': 'Invalid username or password'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def mylogout(request):
-    logout(request)
-    return JSONResponse({})
-
-@require_http_methods(["GET"])
-def questionspack_list(request):
-    """
-    List all questions packs available
-    """
-    questionspacks = QuestionsPack.objects.all()
-    serializer = QuestionsPackSerializer(questionspacks, many=True)
-    return JSONResponse(serializer.data)
-
-@require_http_methods(["GET"])
-def topic_list(request, pack_id):
-    """
-    List all topics available in given questions pack
-    """
-    try:
-        questionspack = QuestionsPack.objects.get(id=pack_id)
-    except QuestionsPack.DoesNotExist:
-        return JSONResponse({'error': 'Specified question pack does not exist'},
-                            status=status.HTTP_404_NOT_FOUND)
-    topics = questionspack.topic_set.all()
-    serializer = TopicSerializer(topics, many=True)
-    return JSONResponse(serializer.data)
 
 def select_questions(topic, number):
     #NOT EFFICIENT IMPLEMENTATION, TO BE IMPROVED
