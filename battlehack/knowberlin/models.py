@@ -36,5 +36,7 @@ class RoundQuestion(models.Model):
     question = models.ForeignKey(Question)
     #1th, 2th .... question in round
     number = models.IntegerField()
-    user1_answer = models.ForeignKey(Answer, related_name='user1_answer')
-    user2_answer = models.ForeignKey(Answer, related_name='user2_answer')
+    user1_answer = models.ForeignKey(Answer, null=True,
+                                     related_name='user1_answer')
+    user2_answer = models.ForeignKey(Answer, null=True,
+                                     related_name='user2_answer')
