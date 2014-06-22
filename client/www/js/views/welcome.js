@@ -33,8 +33,8 @@ define([
           app.settings.each(function(e) { e.save() });
           app.router.navigate("login", {trigger: true});
         })
-        .fail(function (data) {
-          alert(data.error);
+        .fail(function (xhr) {
+          alert(xhr.responseText);
           button.text(oldTxt);
           this.inProgress = false;
         });

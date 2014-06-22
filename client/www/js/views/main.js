@@ -7,19 +7,23 @@ define([
     selector: "#main-panel",
     el: "#main-panel",
 
-    events: {},
+    events: {
+      "click #go-start-game": "startGame",
+      "click #go-settings": "settings"
+    },
 
     render: function () {
       $.ui.setTitle("Main");
       $.ui.updatePanel(this.selector, template);
-      $.get(SERVER_URL + "/questions")
-        .done(function(data) {
-
-        })
-        .fail(function(data) {
-          alert(data.error);
-        })
       return this;
+    },
+
+    startGame: function () {
+      app.router.navigate("selectPack", {trigger: true});
+    },
+
+    settings: function () {
+      alert("Not implemented! :(");
     }
   });
 });

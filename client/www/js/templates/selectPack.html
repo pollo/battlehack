@@ -1,1 +1,5 @@
-Question packs
+<ul class="list">
+  <% _.each(packs, function(pack) { %>
+    <li><a class="pack-link icon pencil" data-packid="<%- pack.id %>" ><%- pack.name %></a></li>
+  <% }); %>
+</ul>
