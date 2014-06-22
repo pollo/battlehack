@@ -9,14 +9,22 @@ var SERVER_URL = "http://192.168.209.125:8000";
 var init = function() {
   require([
     "app",
-    "router"
+    "router",
+    "models/settings"
   ], function (app, Router) {
       $.ui.launch();
       $.ui.ready(function() {
         $('.app-loading').hide();
         app.router = new Router();
         Backbone.history.start();
-        app.router.navigate(app.root, {trigger: true});
+        app.settings.fetch({success: function() {
+          if (app.settings.where({key: "username"}).length > 0) {
+            app.router.navigate("login", {trigger: true});
+          }
+          else {
+            app.router.navigate("welcome", {trigger: true});
+          }
+        }});
       });
   });
 };

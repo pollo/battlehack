@@ -1,7 +1,7 @@
 define(function () {
   var app = {
-    root: "welcome"
+    root: "welcome",
+    storage: openDatabase('appdb', '', 'App data', 5 * 1024 * 1024)
   };
-
   return app;
 });
